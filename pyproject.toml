@@ -11,7 +11,8 @@ dependencies = [
     "quart[dotenv] (>=0.20.0,<0.21.0)",
     "hypercorn (>=0.18.0,<0.19.0)",
     "quart-schema (>=0.22.0,<0.23.0)",
-    "pymongo[srv] (>=4.15.4,<5.0.0)"
+    "quart-mongo (>=0.1.2,<0.2.0)",
+    "quart-rate-limiter (>=0.12.1,<0.13.0)",
 ]
 
 [tool.poetry]
