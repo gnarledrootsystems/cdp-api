@@ -1,24 +1,24 @@
 class QRYM_Companies:
     def __init__(
         self,
-        drug_code,
-        mfr_code,
-        company_code,
-        company_name,
-        company_type,
-        address_mailing_flag,
-        address_billing_flag,
-        address_notification_flag,
-        address_other,
-        suite_number,
-        street_name,
-        city_name,
-        province,
-        country,
-        postal_code,
-        post_office_box,
-        province_f,
-        country_f
+        drug_code=0,
+        mfr_code="",
+        company_code=0,
+        company_name="",
+        company_type="",
+        address_mailing_flag="",
+        address_billing_flag="",
+        address_notification_flag="",
+        address_other="",
+        suite_number="",
+        street_name="",
+        city_name="",
+        province="",
+        country="",
+        postal_code="",
+        post_office_box="",
+        province_f="",
+        country_f=""
     ):
         self.drug_code = drug_code
         self.mfr_code = mfr_code

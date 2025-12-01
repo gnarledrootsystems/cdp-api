@@ -1,9 +1,9 @@
 class QRYM_Schedule:
     def __init__(
         self,
-        drug_code,
-        schedule,
-        schedule_f
+        drug_code=0,
+        schedule="",
+        schedule_f=""
     ):
         self.drug_code = drug_code
         self.schedule = schedule

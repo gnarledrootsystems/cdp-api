@@ -1,14 +1,14 @@
 class QRYM_Packaging:
     def __init__(
         self,
-        drug_code,
-        upc,
-        package_size_unit,
-        package_type,
-        package_size,
-        product_information,
-        package_size_unit_f,
-        package_type_f
+        drug_code=0,
+        upc="",
+        package_size_unit="",
+        package_type="",
+        package_size="",
+        product_information="",
+        package_size_unit_f="",
+        package_type_f=""
     ):
         self.drug_code = drug_code
         self.upc = upc

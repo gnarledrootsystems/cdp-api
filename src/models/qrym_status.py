@@ -1,13 +1,13 @@
 class QRYM_Status:
     def __init__(
         self,
-        drug_code,
-        current_status_flag,
-        status,
-        history_date,
-        status_f,
-        lot_number,
-        expiration_date
+        drug_code=0,
+        current_status_flag="",
+        status="",
+        history_date="",
+        status_f="",
+        lot_number="",
+        expiration_date=""
     ):
         self.drug_code = drug_code
         self.current_status_flag = current_status_flag
