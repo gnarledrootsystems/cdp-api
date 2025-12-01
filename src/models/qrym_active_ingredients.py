@@ -1,21 +1,21 @@
 class QRYM_ActiveIngredients:
     def __init__(
         self,
-        drug_code,
-        active_ingredient_code,
-        ingredient,
-        ingredient_supplied_ind,
-        strength,
-        strength_unit,
-        strength_type,
-        dosage_value,
-        base,
-        dosage_unit,
-        notes,
-        ingredients_f,
-        strength_unit_f,
-        strength_type_f,
-        dosage_unit_f
+        drug_code=0,
+        active_ingredient_code=0,
+        ingredient="",
+        ingredient_supplied_ind="",
+        strength="",
+        strength_unit="",
+        strength_type="",
+        dosage_value="",
+        base="",
+        dosage_unit="",
+        notes="",
+        ingredients_f="",
+        strength_unit_f="",
+        strength_type_f="",
+        dosage_unit_f=""
     ):
         self.drug_code = drug_code
         self.active_ingredient_code = active_ingredient_code
