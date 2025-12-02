@@ -3,25 +3,34 @@ import csv
 import os
 from pathlib import Path
 from typing import Union
+from contextlib import suppress
 from src.models import QRYM_ActiveIngredients, QRYM_VeterinarySpecies, QRYM_Biosimilars, QRYM_Companies, QRYM_DrugProduct, QRYM_Form, QRYM_InactiveProducts, QRYM_Packaging, QRYM_PharmaceuticalSTD, QRYM_Route, QRYM_Schedule, QRYM_Status, QRYM_TherapeuticClass
 import src.utilities.memsnap as memsnap
 import src.utilities.colors as colors
-
 
 """
 Importer Command
 [poetry run quart importer]
 """
 def importer(app):
-    # @click.option("--my-option")
+    @click.option("--import-date", 'import_date')
     @app.cli.command("importer")
-    def importer():
-        print("Running importer...")
-        process_marketed_drug_files()
+    def importer(import_date):
+        if import_date:
+            print("Running importer for Date {import_date}")
+            process_marketed_drug_files(import_date)
+            process_approved_drug_files(import_date)
+            process_cancelled_drug_files(import_date)
+            process_dormant_drug_files(import_date)
+        else:
+            print("No Import Date was passed.")
+            
     return app
 
 """
 Grab the project root based on the location of "pyproject.toml"
+
+Returns: Project root Path object
 """
 def get_project_root():
     current = os.path.abspath(os.path.dirname(__file__))
@@ -40,6 +49,8 @@ Return all files as a list within the given directory
 
 date_dir: The Directory of the Export, i.e: "2025-11-03"
 product_dir: The child folders, i.e: "allfiles|allfiles_*"
+
+Returns: List of Path objects
 """
 def get_file_names(date_dir, product_dir):
     drug_file_directory = Path(get_project_root() / "import_files")
@@ -62,36 +73,57 @@ def get_file_names(date_dir, product_dir):
 """
 
 """    
-def process_marketed_drug_files():
-    files = get_file_names("2025-11-03", "allfiles")
-    
+def process_marketed_drug_files(import_date):
+    files = get_file_names(import_date, "allfiles")
     for file in files:
-        process_file_by_name(str(file))
+        qrym_model = map_file_to_qrym_model(str(file))
         
-    return True
-
+        qrym_model_list = []
+        if qrym_model:
+            qrym_model_list = build_qrym_model_list(file, qrym_model)
+            
+        if qrym_model_list:
+            # Now we have a list of all the QRYM Model objects.
+            # We need to start converting them to MongoDB-Compatible
+            # JSON and inserting them.
+            # The insertions should be done in batches to save on requests
+            # to the MongoDB instance, especially since some of the files
+            # are 15k lines.
+            # Batching of maybe 250 Rows would be sufficient.
+            # TODO:
+            # 1. Setup MongoDB Config and Functions for Insert|Batch Insert
+            # 2. Create function for chunking the lists and batch inserting
+            print('todo')
+            
+"""
+TODO: All the separate functions below for processing can be reduced into one
+where I pass in the "allfiles|allfiles_*" as a parameter.
+"""
 # allfiles_ia
-def process_cancelled_drug_files():
-    files = get_file_names("2025-11-03", "allfiles_ia")
-    return True
+def process_cancelled_drug_files(import_date):
+    files = get_file_names(import_date, "allfiles_ia")
+    for file in files:
+        map_file_to_qrym_model(str(file))
 
 # allfiles_ap
-def process_approved_drug_files():
-    files = get_file_names("2025-11-03", "allfiles_ap")
-    return True
+def process_approved_drug_files(import_date):
+    files = get_file_names(import_date, "allfiles_ap")
+    for file in files:
+        map_file_to_qrym_model(str(file))
 
 # allfiles_dr
-def process_dormant_drug_files():
-    files = get_file_names("2025-11-03", "allfiles_dr")
-    return True
+def process_dormant_drug_files(import_date):
+    files = get_file_names(import_date, "allfiles_dr")
+    for file in files:
+        map_file_to_qrym_model(str(file))
 
 """
 Maps the given file to the correct model and runs the model list builder
 with the file and correct model to use.
 
-Returns: List of {Model} | Empty List
+Returns: QRYM Model
 """
-def process_file_by_name(file):
+def map_file_to_qrym_model(file):
     qrym_model = None
     
     if "biosimilar" in file:
@@ -119,13 +151,15 @@ def process_file_by_name(file):
     elif "vet" in file:
         qrym_model = QRYM_VeterinarySpecies()
     
-    if qrym_model:
-        return build_model_list(file, qrym_model)
-    else:
-        return []
+    return qrym_model
     
-    
-def build_model_list(file, model: Union[
+"""
+Given the QRYM Model, this function loads the passed csv file and builds a
+list of the appropriate QRYM Model.
+
+Returns: List<QRYM Model>
+"""
+def build_qrym_model_list(file, model: Union[
     QRYM_ActiveIngredients,
     QRYM_VeterinarySpecies,
     QRYM_Biosimilars,
@@ -146,7 +180,6 @@ def build_model_list(file, model: Union[
     print(f"Model: {model}")
     
     qrym_model_list = []
-    print(f"")
     with open(file, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         if isinstance(model, QRYM_ActiveIngredients):
@@ -232,7 +265,7 @@ def build_model_list(file, model: Union[
                 )
                 qrym_model_list.append(qrym_model)
     
-    memsnap.stop(build_model_list.__name__)
+    memsnap.stop(build_qrym_model_list.__name__)
     
     return qrym_model_list                
             
