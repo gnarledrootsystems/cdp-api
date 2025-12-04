@@ -3,10 +3,14 @@ import csv
 import os
 from pathlib import Path
 from typing import Union
+from flask import Flask, current_app, g, has_app_context
+from flask.cli import with_appcontext
 from contextlib import suppress
-from src.models import QRYM_ActiveIngredients, QRYM_VeterinarySpecies, QRYM_Biosimilars, QRYM_Companies, QRYM_DrugProduct, QRYM_Form, QRYM_InactiveProducts, QRYM_Packaging, QRYM_PharmaceuticalSTD, QRYM_Route, QRYM_Schedule, QRYM_Status, QRYM_TherapeuticClass
-import src.utilities.memsnap as memsnap
-import src.utilities.colors as colors
+from app.models import QRYM_ActiveIngredients, QRYM_VeterinarySpecies, QRYM_Biosimilars, QRYM_Companies, QRYM_DrugProduct, QRYM_Form, QRYM_InactiveProducts, QRYM_Packaging, QRYM_PharmaceuticalSTD, QRYM_Route, QRYM_Schedule, QRYM_Status, QRYM_TherapeuticClass
+import app.utilities.memsnap as memsnap
+import app.utilities.colors as colors
+from app.database.mongodb import get_db
+
 
 """
 Importer Command
@@ -16,6 +20,9 @@ def importer(app):
     @click.option("--import-date", 'import_date')
     @app.cli.command("importer")
     def importer(import_date):
+        print(f"Importer Has App Context: {has_app_context()}")
+        print(f"Importer Current App: {current_app}")
+        
         if import_date:
             print("Running importer for Date {import_date}")
             process_marketed_drug_files(import_date)
@@ -24,6 +31,13 @@ def importer(app):
             process_dormant_drug_files(import_date)
         else:
             print("No Import Date was passed.")
+            
+            db = get_db()
+            print(db)
+            #mongo = PyMongo(current_app)
+
+            result = db.drug_product.find_one({})
+            print(result)
             
     return app
 

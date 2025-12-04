@@ -1,3 +1,4 @@
+"""
 from quart import Blueprint
 
 drugbp = Blueprint('drug', __name__)
@@ -9,3 +10,4 @@ async def index():
 @drugbp.route('/import')
 async def importer():
     return "Importing Drugs"
+"""
