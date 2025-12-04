@@ -1,14 +1,11 @@
 import os
 
 from flask import Flask
-#from instance.config import DevelopmentConfig, ProductionConfig
-from dotenv import load_dotenv
 from app.database.mongodb import init_db
 from app.modules.importer import importer
+from config import DevelopmentConfig, ProductionConfig, TesetingConfig
 
 def create_app(test_config=None):
-    load_dotenv()
-    
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
