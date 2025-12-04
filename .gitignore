@@ -1,2 +1,6 @@
 __pycache__/
 poetry.lock
+config.py
+
+import_files/**
+!/import_files/
