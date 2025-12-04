@@ -1,7 +1,6 @@
 # Canadian Drug Product Information API
 
-### Running with Hypercorn
-`poetry run hypercorn server:app`
+### Running with
 
-### Running for Development using app.run()
-`poetry run dev`
+### Running for Development
+`flask --app app run`
